@@ -1,0 +1,6 @@
+chromadb
+sentence-transformers
+langchain
+langchain_core
+langchain-community
+ollama
