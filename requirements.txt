@@ -4,3 +4,5 @@ langchain
 langchain_core
 langchain-community
 ollama
+langchain-text-splitters
+tqdm

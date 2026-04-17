@@ -70,10 +70,14 @@ def generate_embeddings_in_batches(texts: List[str], model: SentenceTransformer,
 
 def create_chroma_index(chunks: List[LangchainDocument], persist_dir: str, batch_size: int):
     client = chromadb.PersistentClient(path=persist_dir)
-    try:
+
+    existing_collections = client.list_collections()
+    collection_names = [col.name for col in existing_collections]
+
+    if "knowledge_base" in collection_names:
         client.delete_collection("knowledge_base")
-    except ValueError:
-        pass
+        print("Старая коллекция удалена.")
+
     collection = client.create_collection(name="knowledge_base")
 
     ids = []
@@ -98,7 +102,6 @@ def create_chroma_index(chunks: List[LangchainDocument], persist_dir: str, batch
     model = SentenceTransformer(EMBEDDING_MODEL_NAME)
     print(f"Модель загружена. Размер эмбеддинга: {model.get_embedding_dimension()}")
 
-    # Генерируем эмбеддинги для всех текстов
     print("Генерация эмбеддингов...")
     all_embeddings = []
     for i in tqdm(range(0, len(texts_for_embedding), BATCH_SIZE)):
